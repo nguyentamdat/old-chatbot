@@ -1,0 +1,1 @@
+web: gunicorn server-cse-assistant:app --bind 0.0.0.0:$PORT
