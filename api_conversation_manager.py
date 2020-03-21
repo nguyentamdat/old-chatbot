@@ -5,9 +5,9 @@
 
 
 # chạy mining nhớ exclude intent
-from data_utils.check_question import check_question
-from information_extractor import extract_information
-from intent_regconizer_activity import extract_and_get_intent
+# from data_utils.check_question import check_question
+# from information_extractor import extract_information
+# from intent_regconizer_activity import extract_and_get_intent
 import time
 import random
 import numpy as np
