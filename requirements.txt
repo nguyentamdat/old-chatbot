@@ -18,3 +18,4 @@ Keras
 Keras-Applications
 Keras-Preprocessing
 pymongo
+tensorflow
