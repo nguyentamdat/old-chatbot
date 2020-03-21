@@ -10,3 +10,4 @@ mock
 coverage
 fastai
 numpy==1.15.2
+scikit-learn
