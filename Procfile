@@ -1,1 +1,1 @@
-web: gunicorn server-cse-assistant:app --bind 0.0.0.0:$PORT
+web: gunicorn api_conversation_manager:app --bind 0.0.0.0:$PORT
