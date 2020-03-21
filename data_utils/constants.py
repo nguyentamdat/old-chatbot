@@ -62,7 +62,7 @@ CONST_THRESHOLD=0.4
 list_label=['contact','register','activity','work','joiner']
 le = preprocessing.LabelEncoder()
 y = le.fit_transform(list_label)
-vocab = torch.load('saved_model/new_vocab.h5')
+vocab = torch.load('new_vocab.h5')
 lm = get_language_model(AWD_LSTM, 27498)
 lm.eval()
 lm.load_state_dict(torch.load("saved_model/model_cpu_add_new_vocab.pth"))
