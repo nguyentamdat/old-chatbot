@@ -10,7 +10,10 @@ import torch
 import numpy as np
 from sklearn.externals import joblib
 from sklearn import preprocessing
+import os.path
 from collections import OrderedDict
+
+current_path = os.path.abspath(os.path.dirname(__file__))
 TAGS = OrderedDict()
 TAGS.update([('normal', 'O'),
              ('addr_street', 'STREET'),
@@ -62,13 +65,12 @@ CONST_THRESHOLD=0.4
 list_label=['contact','register','activity','work','joiner']
 le = preprocessing.LabelEncoder()
 y = le.fit_transform(list_label)
-vocab = torch.load('new_vocab.h5')
+vocab = torch.load(os.path.join(current_path,'saved_model/new_vocab.h5'))
 lm = get_language_model(AWD_LSTM, 27498)
 lm.eval()
-lm.load_state_dict(torch.load("saved_model/model_cpu_add_new_vocab.pth"))
-clf = joblib.load('saved_model/lm_kernel_linear_svm_classifier_final.pkl') 
+lm.load_state_dict(torch.load(os.path.join(current_path,"saved_model/model_cpu_add_new_vocab.pth")))
+clf = joblib.load(os.path.join(current_path,'saved_model/lm_kernel_linear_svm_classifier_final.pkl')) 
 emb_sz=lm[0].emb_sz
-
 
 #INTENT PATTERN MATCHING SIGNAL
 list_name_place_notification=["nơi","tại đâu","tại chỗ nào","ở đâu","chỗ nào","tại đâu","khu nào","địa điểm của","địa điểm nào","chỗ diễn ra","chỗ đâu","khu tổ chức","là ở","là tại","là nơi","là tập trung tại","là diễn ra tại","là diễn ra ở"]
