@@ -11,3 +11,10 @@ coverage
 fastai
 numpy==1.15.2
 scikit-learn
+Flask-PyMongo
+Flask-Cors
+joblib
+Keras
+Keras-Applications
+Keras-Preprocessing
+pymongo
