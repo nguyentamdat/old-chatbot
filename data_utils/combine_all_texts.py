@@ -1,7 +1,7 @@
 if __name__ == '__main__':
     import json
     from data_utils.clean_text import clean_text
-    from data_utils.constants import ALL_TEXTS
+    from constants import ALL_TEXTS
     import os
     import argparse
     parser = argparse.ArgumentParser()

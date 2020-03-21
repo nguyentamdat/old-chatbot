@@ -24,7 +24,7 @@ def read_polyglot(path, word_tokenizer):
 
 
 if __name__ == '__main__':
-    from data_utils.constants import WORD_VEC_PATH
+    from constants import WORD_VEC_PATH
     import pickle
     with open('output/word_tokenizer.pkl', 'rb') as file:
         word_tokenizer = pickle.load(file)

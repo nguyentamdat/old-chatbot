@@ -1,7 +1,7 @@
 import numpy as np
 
 from data_utils.clean_text import clean_text
-from data_utils.constants import (B_TOKEN, CHARACTER_SEPARATOR, CLASSES,
+from constants import (B_TOKEN, CHARACTER_SEPARATOR, CLASSES,
                                   I_TOKEN, SPLIT_TOKEN, TAGS,
                                   WORD_TAG_SEPARATOR)
 

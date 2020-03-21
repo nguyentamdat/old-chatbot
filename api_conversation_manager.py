@@ -15,7 +15,7 @@ from flask import Flask, request, jsonify
 from flask_pymongo import PyMongo
 from flask_cors import CORS
 from temp_agent_action_gen import *
-from data_utils.constants import *
+from constants import *
 from message_handler import *
 from agen_response_gen import *
 from dqn_agent import DQNAgent

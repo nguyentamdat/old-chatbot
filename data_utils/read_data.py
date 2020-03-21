@@ -1,6 +1,6 @@
 import tensorflow as tf
 import os
-from data_utils.constants import SPLIT_TOKEN, TAGS, WORD_TAG_SEPARATOR, CHARACTER_SEPARATOR
+from constants import SPLIT_TOKEN, TAGS, WORD_TAG_SEPARATOR, CHARACTER_SEPARATOR
 import numpy as np
 
 

@@ -2,7 +2,7 @@ if __name__ == '__main__':
     import tensorflow as tf
     import re
     import pickle
-    from data_utils.constants import ALL_TEXTS
+    from constants import ALL_TEXTS
     from keras.preprocessing.text import Tokenizer
     with open(ALL_TEXTS, 'r') as file:
         word_tokenizer = Tokenizer(

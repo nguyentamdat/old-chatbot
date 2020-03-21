@@ -1,6 +1,6 @@
 if __name__ == '__main__':
     import fastText
-    from data_utils.constants import ALL_TEXTS, WORD_VEC_PATH
+    from constants import ALL_TEXTS, WORD_VEC_PATH
     model = fastText.train_unsupervised(ALL_TEXTS,
                                         model='cbow',
                                         lr=0.05,

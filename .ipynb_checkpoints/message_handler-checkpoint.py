@@ -11,7 +11,7 @@ import pickle
 import numpy as np
 from sklearn.externals import joblib
 from sklearn import preprocessing
-from data_utils.constants import *
+from constants import *
 import json
 from collections import OrderedDict
 import re
