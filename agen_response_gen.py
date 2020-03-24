@@ -199,7 +199,7 @@ def response_craft(agent_action, state_tracker, confirm_obj,isGreeting=False):
                 sentence = sentence.replace("*found_slot_instance*", "\"{}\"".format(inform_value))
             else: #slot mà user request của kết quả trả về là list rỗng  
                 # inform_value = "không có thông tin này"
-                sentence = EMPTY_SLOT[0].replace("*request_slot*",inform_slot)
+                sentence = EMPTY_SLOT[0].replace("*request_slot*",AGENT_INFORM_OBJECT[inform_slot])
 
             sentence += response_match
     return sentence
