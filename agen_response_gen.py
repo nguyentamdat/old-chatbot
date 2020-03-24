@@ -32,6 +32,9 @@ MATCH_FOUND = {
     ],
     'not_found': [
         "Mình không tìm thấy bài đăng chứa thông tin *found_slot* mà bạn cần, bạn xem lại các thông tin đã cung cấp dưới đây và điều chỉnh lại giúp mình nhé!"
+    ],
+    'found_activity' :[
+        "Dưới đây là các hoạt động bạn cần tìm."
     ]
 }
 REQUEST = {}
@@ -174,8 +177,7 @@ def response_craft(agent_action, state_tracker, confirm_obj,isGreeting=False):
             key = agent_action['inform_slots']['activity']
             first_result_data = agent_action['inform_slots'][key][0]
             
-            sentence_pattern = random.choice(MATCH_FOUND['found'])
-            sentence = sentence_pattern.replace("*found_slot*", AGENT_INFORM_OBJECT[inform_slot])
+            
             # #nếu là câu hỏi intent confirm thì cần response lại mà match hay không
             # print("-------------------------------inform slot :{}".format(inform_slot))
             # print("---------------------------------confirm obj: {}".format(confirm_obj))
@@ -191,15 +193,21 @@ def response_craft(agent_action, state_tracker, confirm_obj,isGreeting=False):
                     response_match = "\n \n Đúng rồi! {0} là {1}".format(AGENT_INFORM_OBJECT[inform_slot],value_match)
                 else:
                     response_match = "\n \n Sai rồi! {0} không là {1}".format(AGENT_INFORM_OBJECT[inform_slot],value_match)
-            if len(first_result_data[inform_slot]) > 1:
-                inform_value = ",\n".join(first_result_data[inform_slot])
-                sentence = sentence.replace("*found_slot_instance*", "\n\"{}\"".format(inform_value))
-            elif len(first_result_data[inform_slot]) == 1:
-                inform_value = first_result_data[inform_slot][0]
-                sentence = sentence.replace("*found_slot_instance*", "\"{}\"".format(inform_value))
-            else: #slot mà user request của kết quả trả về là list rỗng  
-                # inform_value = "không có thông tin này"
-                sentence = EMPTY_SLOT[0].replace("*request_slot*",AGENT_INFORM_OBJECT[inform_slot])
+            if inform_slot != "activity":
+                sentence_pattern = random.choice(MATCH_FOUND['found'])
+                sentence = sentence_pattern.replace("*found_slot*", AGENT_INFORM_OBJECT[inform_slot])
+                if len(first_result_data[inform_slot]) > 1:
+                    inform_value = ",\n".join(first_result_data[inform_slot])
+                    sentence = sentence.replace("*found_slot_instance*", "\n\"{}\"".format(inform_value))
+                elif len(first_result_data[inform_slot]) == 1:
+                    inform_value = first_result_data[inform_slot][0]
+                    sentence = sentence.replace("*found_slot_instance*", "\"{}\"".format(inform_value))
+                else: #slot mà user request của kết quả trả về là list rỗng  
+                    # inform_value = "không có thông tin này"
+                    sentence = EMPTY_SLOT[0].replace("*request_slot*",AGENT_INFORM_OBJECT[inform_slot])
+            else:
+                sentence = random.choice(MATCH_FOUND['found_activity'])
+
 
             sentence += response_match
     return sentence

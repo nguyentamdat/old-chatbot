@@ -13,8 +13,8 @@
       "success_rate_threshold": 0.3
     },
     "agent": {
-      "save_weights_file_path": "agent_weights/model_limited_slots_1000_limit_agent_non_empty_rule_2_layer_v9.h5",
-      "load_weights_file_path": "agent_weights/model_limited_slots_1000_limit_agent_non_empty_rule_2_layer_v9.h5",
+      "save_weights_file_path": "agent_weights_before_newest/model_limited_slots_1000_limit_agent_non_empty_rule_2_layer_limit_done_response_v2_matchfound_soon_1.h5",
+      "load_weights_file_path": "agent_weights_before_newest/model_limited_slots_1000_limit_agent_non_empty_rule_2_layer_limit_done_response_v2_matchfound_soon_1.h5",
       "vanilla": true,
       "learning_rate": 5e-5,
       "batch_size": 21,
