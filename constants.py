@@ -73,7 +73,7 @@ clf = joblib.load(os.path.join(current_path,'saved_model/lm_kernel_linear_svm_cl
 emb_sz=lm[0].emb_sz
 
 #INTENT PATTERN MATCHING SIGNAL
-list_name_place_notification=["nơi","tại đâu","tại chỗ nào","ở đâu","chỗ nào","tại đâu","khu nào","địa điểm của","địa điểm nào","chỗ diễn ra","chỗ đâu","khu tổ chức","là ở","là tại","là nơi","là tập trung tại","là diễn ra tại","là diễn ra ở"]
+list_name_place_notification=["nơi","tại đâu","địa điểm diễn ra","tại chỗ nào","ở đâu","chỗ nào","tại đâu","khu nào","địa điểm của","địa điểm nào","chỗ diễn ra","chỗ đâu","khu tổ chức","là ở","là tại","là nơi","là tập trung tại","là diễn ra tại","là diễn ra ở"]
 list_address_notification=["ấp nào","phường nào","xã nào","quận nào","huyện nào","thành phố nào","tỉnh nào","đường nào","đường gì","số mấy","địa chỉ nào","địa chỉ","tên đường","số nhà","phường mấy","quận mấy","số mấy"]
 list_type_activity_notification=["loại hoạt động","loại nào","loại gì","kiểu hoạt động","kiểu gì","kiểu nào"]
 list_name_activity_notification=["tên gì","tên là gì","tên hoạt động là gì","tên hoạt động"] #check lai

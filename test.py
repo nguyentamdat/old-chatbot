@@ -35,5 +35,5 @@ if __name__ == '__main__':
     #     print(i)
 
     #================================SINGLE TEST
-    print(process_message_to_user_request("cho mình hỏi lợi ích khi tham gia an toàn thực phẩm và an ninh lương thực của trung tâm phát triển khoa học và công nghệ trẻ là được tiền hỗ trợ của nhà trường phải không bạn",state_tracker))
+    print(process_message_to_user_request("cho mình hỏi địa điểm diễn ra hoạt động gia sư tình bạn - hóa đại cương 2 với bạn ơi ?",state_tracker))
     # print(find_all_entity("reward_inform","chủ động kết nối tìm kiếm học bổng và việc làm"))
