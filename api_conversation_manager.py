@@ -21,6 +21,10 @@ from agen_response_gen import *
 from dqn_agent import DQNAgent
 from agent_utils.state_tracker import StateTracker
 from keras import backend as K
+from pymongo import MongoClient
+
+
+
 app = Flask(__name__)
 CORS(app)
 
@@ -30,14 +34,24 @@ StateTracker_Container = dict()
 app.config["MONGO_URI"] = "mongodb://caochanhduong:bikhungha1@ds261626.mlab.com:61626/activity?retryWrites=false"
 mongo = PyMongo(app)
 
+
 CONSTANT_FILE_PATH = 'constants.json'
 with open(CONSTANT_FILE_PATH) as f:
     constants = json.load(f)
 
-file_path_dict = constants['db_file_paths']
-DATABASE_FILE_PATH = file_path_dict['database']
 
-database= json.load(open(DATABASE_FILE_PATH,encoding='utf-8'))
+# ##############DATABASE FILE
+# file_path_dict = constants['db_file_paths']
+# DATABASE_FILE_PATH = file_path_dict['database']
+
+# database= json.load(open(DATABASE_FILE_PATH,encoding='utf-8'))
+
+####################DATABASE REMOTE
+# client = MongoClient()
+client = MongoClient('mongodb://caochanhduong:bikhungha1@ds261626.mlab.com:61626/activity?retryWrites=false')
+database = client.activity
+
+
 # state_tracker = StateTracker(database, constants)
 # dqn_agent = DQNAgent(state_tracker.get_state_size(), constants)    
 def msg(code, mess=None):

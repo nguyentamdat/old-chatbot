@@ -28,7 +28,7 @@ def get_greeting_statement():
 
 MATCH_FOUND = {
     'found': [
-        "Thông tin *found_slot* bạn cần: *found_slot_instance*, bên dưới là hoạt động cụ thể chứa thông tin đó và một số hoạt động khác cũng thỏa điều kiện bạn đưa ra"
+        "Thông tin *found_slot* chung bạn cần: *found_slot_instance*, bên dưới là hoạt động cụ thể chứa thông tin đó và một số hoạt động khác cũng thỏa điều kiện bạn đưa ra"
     ],
     'not_found': [
         "Mình không tìm thấy bài đăng chứa thông tin *found_slot* mà bạn cần, bạn xem lại các thông tin đã cung cấp dưới đây và điều chỉnh lại giúp mình nhé!"
@@ -137,6 +137,8 @@ AGENT_INFORM_OBJECT = {
     "activity": "hoạt động"
 }
 
+list_map_key = ["works", "name_place", "address", "time"]
+
 def response_craft(agent_action, state_tracker, confirm_obj,isGreeting=False):
     if isGreeting:
         return random.choice(GREETING)
@@ -176,8 +178,7 @@ def response_craft(agent_action, state_tracker, confirm_obj,isGreeting=False):
         else:
             key = agent_action['inform_slots']['activity']
             first_result_data = agent_action['inform_slots'][key][0]
-            
-            
+
             # #nếu là câu hỏi intent confirm thì cần response lại mà match hay không
             # print("-------------------------------inform slot :{}".format(inform_slot))
             # print("---------------------------------confirm obj: {}".format(confirm_obj))
@@ -208,8 +209,31 @@ def response_craft(agent_action, state_tracker, confirm_obj,isGreeting=False):
             else:
                 sentence = random.choice(MATCH_FOUND['found_activity'])
 
+            list_obj_map_match = []
+            response_obj = ''
+            if "time_works_place_address_mapping" in first_result_data and first_result_data["time_works_place_address_mapping"] not in [None,[]] and inform_slot in list_map_key:
+                current_informs = state_tracker.current_informs
+                print("--------------------------current informs : {0}".format(current_informs))
+                list_obj_map = first_result_data["time_works_place_address_mapping"]
+                for obj_map in list_obj_map:
+                    check_match = True
+                    for map_key in list_map_key:
+                        if map_key in current_informs:
+                            if current_informs[map_key] != "anything" and not check_match_sublist_and_substring(current_informs[map_key],obj_map[map_key]):
+                                check_match = False
+                                break
+                    if check_match and obj_map not in list_obj_map_match:
+                        list_obj_map_match.append(obj_map)
+            if list_obj_map_match != []:
+                response_obj += "Cụ thể các công việc sẽ là (kèm theo thời gian, địa điểm, địa chỉ):\n"
+                for obj_map_match in list_obj_map_match:
+                    response_obj += "======================\n"
+                    for key in list_map_key:
+                        response_obj += "+ {0} : {1} \n".format(AGENT_INFORM_OBJECT[key], ', '.join(obj_map_match[key]))
 
-            sentence += response_match
+
+            
+            sentence += "\n" + response_obj + response_match
     return sentence
 
 # print(response_craft({'intent': 'inform', 'inform_slots': {'holder': ['đội công tác xã hội']}, 'request_slots': {}, 'round': 1, 'speaker': 'Agent'}))
