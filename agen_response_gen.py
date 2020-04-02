@@ -184,7 +184,20 @@ def response_craft(agent_action, state_tracker, confirm_obj,isGreeting=False):
             # print("---------------------------------confirm obj: {}".format(confirm_obj))
             response_match = ''
             if confirm_obj != None:
-                check_match = check_match_sublist_and_substring(confirm_obj[inform_slot],first_result_data[inform_slot])
+                if inform_slot not in list_map_key:
+                    check_match = check_match_sublist_and_substring(confirm_obj[inform_slot],first_result_data[inform_slot])
+                else: #nếu là 4 key map
+                    check_match = check_match_sublist_and_substring(confirm_obj[inform_slot],first_result_data[inform_slot])
+                    # neu chưa match với key chung thì tìm trong map
+                    if not check_match:
+                        if "time_works_place_address_mapping" in first_result_data and first_result_data["time_works_place_address_mapping"] not in [None,[]]:
+                            list_obj_map = first_result_data["time_works_place_address_mapping"]
+                            for obj_map in list_obj_map:
+                                if inform_slot in obj_map:
+                                    if check_match_sublist_and_substring(confirm_obj[inform_slot],obj_map[inform_slot]):
+                                        check_match = True
+                                        break
+
                 value_match = ''
                 if len(confirm_obj[inform_slot]) > 1:
                     value_match = ',\n'.join(confirm_obj[inform_slot])
@@ -224,16 +237,19 @@ def response_craft(agent_action, state_tracker, confirm_obj,isGreeting=False):
                                 break
                     if check_match and obj_map not in list_obj_map_match:
                         list_obj_map_match.append(obj_map)
+
             if list_obj_map_match != []:
                 response_obj += "Cụ thể các công việc sẽ là (kèm theo thời gian, địa điểm, địa chỉ):\n"
                 for obj_map_match in list_obj_map_match:
-                    response_obj += "======================\n"
+                    response_obj += "************************************************* \n"
                     for key in list_map_key:
                         response_obj += "+ {0} : {1} \n".format(AGENT_INFORM_OBJECT[key], ', '.join(obj_map_match[key]))
 
 
-            
+            # print(sentence)
             sentence += "\n" + response_obj + response_match
+            print("-----------------------------match sentence")
+            print(sentence)
     return sentence
 
 # print(response_craft({'intent': 'inform', 'inform_slots': {'holder': ['đội công tác xã hội']}, 'request_slots': {}, 'round': 1, 'speaker': 'Agent'}))
