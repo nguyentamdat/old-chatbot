@@ -24,6 +24,68 @@ db.activities.find({
 	]
 })
 
+query mới
+db.activities.find({
+	$and: [
+		{name_activity: {$all: [re.compile(value1),re.compile(value2)]}},
+		{type_activity: {$all: [re.compile(value1),re.compile(value2)]}},
+		...,
+		{
+			$and: [
+					{
+						$or:
+							[
+								{
+									time: {$all: [re.compile(value1)]},
+								},
+								{
+									map: { $all: [{ "$elemMatch" : { time:{$all :[re.complie(value1)]} } }                                  ] }
+								}
+
+							]
+					},
+					{
+						$or:
+							[
+								{
+									{time: {$all: [re.compile(value2)]}},
+								},
+								{
+									map: { $all: [{ "$elemMatch" : { time:{$all :[re.complie(value2)]} } }                                  ] }
+								}
+
+							]
+					},
+					{
+						$or:
+							[
+								{
+									{works}: {$all: [re.compile(value1)]}},
+								},
+								{
+									map: { $all: [{ "$elemMatch" : { works:{$all :[re.complie(value1)]} } }                                  ] }
+								}
+
+							]
+					},
+					{
+						$or:
+							[
+								{
+									{works: {$all: [re.compile(value2)]}},
+								},
+								{
+									map: { $all: [{ "$elemMatch" : { works:{$all :[re.complie(value2)]} } }                                  ] }
+								}
+							]
+					}
+			]
+
+		}
+	]
+})
+
+
 trường hợp inform: Lưu thêm object chỗ fill inform slot và trả về object, lưu vào container
 trường hợp matchfound: state tracker lấy current inform ra để lúc match found lấy ra object thích hợp
 

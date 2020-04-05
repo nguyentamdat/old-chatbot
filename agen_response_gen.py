@@ -1,7 +1,7 @@
 import re
 import random
 from message_handler import check_match_sublist_and_substring
-
+from constants import list_map_key
 
 GREETING = [
     'Xin chào! Mình là CSE Assistant. Mình có thể giúp gì được bạn?',
@@ -137,7 +137,6 @@ AGENT_INFORM_OBJECT = {
     "activity": "hoạt động"
 }
 
-list_map_key = ["works", "name_place", "address", "time"]
 
 def response_craft(agent_action, state_tracker, confirm_obj,isGreeting=False):
     if isGreeting:

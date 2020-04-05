@@ -1,5 +1,5 @@
 from collections import defaultdict
-from .dialogue_config import no_query_keys, usersim_default_key
+from dialogue_config import no_query_keys, usersim_default_key
 import copy
  
 from flask import Flask, request, jsonify
@@ -7,7 +7,10 @@ from flask_pymongo import PyMongo
 from flask_cors import CORS
 import re
 from pymongo import MongoClient
- 
+
+###### tạm thời để đây vì import từ constants báo lỗi no module name constants
+list_map_key = ["works", "name_place", "address", "time"]
+
 # app = Flask(__name__)
 # CORS(app)
  
@@ -133,11 +136,19 @@ class DBQuery:
             # If there is a match
             if key in current_option_dict.keys():
                 slot_value = current_option_dict[key]
+                if key in list_map_key:
+                    if "time_works_place_address_mapping" in current_option_dict and current_option_dict["time_works_place_address_mapping"] is not None:
+                        list_obj_map = current_option_dict["time_works_place_address_mapping"]
+                        for obj_map in list_obj_map:
+                            if key in obj_map:
+                                slot_value.append(obj_map[key])
+                # đồng bộ các value để không cần xét đến thứ tự xuất hiện
+                slot_value = list(set(slot_value))
+
                 # print(slot_value)
                 if any(isinstance(i,list) for i in slot_value):
                   slot_value = [value for sub_list in slot_value for value in sub_list]
 
-          
                 tp_slot_value = tuple(slot_value)
                 # print(type(tp_slot_value))
                 # This will add 1 to 0 if this is the first time this value has been encountered, or it will add 1
@@ -264,30 +275,78 @@ class DBQuery:
         self.cached_db_slot[inform_items].update(db_results)
         assert self.cached_db_slot[inform_items] == db_results
         return db_results
+    # def convert_to_regex_constraint(self, constraints):
+    #     list_and_out = []
+    #     list_and_in = []
+    #     ele_match_obj = {}
+    #     list_or = []
+    #     for k,values in constraints.items():
+    #         list_pat = []
+    #         for value in values:
+    #             list_pat.append(re.compile(".*{0}.*".format(value)))
+    #         # regex_constraint_dict[k] = {"$all":list_pat}
+    #         if k not in ["works","name_place","address","time"]:
+    #             list_and_out.append({k:{"$all":list_pat}})
+    #         else:
+    #             list_and_in.append({k:{"$all":list_pat}})
+    #             ele_match_obj[k] = {"$all":list_pat}
+    #     if list_and_in != [] :
+    #         list_or = [{"$and":list_and_in},{"time_works_place_address_mapping":{"$all":[{"$elemMatch":ele_match_obj}]}}]
+    #         list_and_out.append({"$or" : list_or})
+    #     regex_constraint_dict = {"$and":list_and_out}
+    #     return regex_constraint_dict
+
     def convert_to_regex_constraint(self, constraints):
         list_and_out = []
         list_and_in = []
         ele_match_obj = {}
         list_or = []
+        regex_constraint_dict = {}
         for k,values in constraints.items():
-            list_pat = []
-            for value in values:
-                list_pat.append(re.compile(".*{0}.*".format(value)))
-            # regex_constraint_dict[k] = {"$all":list_pat}
-            if k not in ["works","name_place","address","time"]:
-                list_and_out.append({k:{"$all":list_pat}})
+            if k not in list_map_key:
+                list_pattern = []
+                for value in values:
+                    list_pattern.append(re.compile(".*{0}.*".format(value)))
+                if list_pattern != []:
+                    list_and_out.append({k: {"$all": list_pattern}})
             else:
-                list_and_in.append({k:{"$all":list_pat}})
-                ele_match_obj[k] = {"$all":list_pat}
-        if list_and_in != [] :
-            list_or = [{"$and":list_and_in},{"time_works_place_address_mapping":{"$all":[{"$elemMatch":ele_match_obj}]}}]
-            list_and_out.append({"$or" : list_or})
-        regex_constraint_dict = {"$and":list_and_out}
+                for value in values:
+                    list_and_in.append({
+                        "$or" : [
+                                    {
+                                        k: {
+                                            "$all": [re.compile(".*{0}.*".format(value))]
+                                        }
+                                    },
+                                    {    
+                                        "time_works_place_address_mapping": {
+                                            "$all": [
+                                                        {
+                                                            "$elemMatch": {
+                                                                    k: {
+                                                                        "$all": [re.compile(".*{0}.*".format(value))]
+                                                                    }
+                                                            }
+                                                        }
+                                                    ]
+                                        }
+                                    }
+                                ]
+                    })
+
+        if list_and_in != []:
+            list_and_out.append({"$and": list_and_in})
+
+        if list_and_out != []:
+            regex_constraint_dict = {"$and":list_and_out}
         return regex_constraint_dict
+
+                
+
 
 # from pymongo import MongoClient
 # client = MongoClient('mongodb://caochanhduong:bikhungha1@ds261626.mlab.com:61626/activity?retryWrites=false')
 # database = client.activity
 # dbquery = DBQuery(database)
-# print(dbquery.get_db_results({"name_activity":["đêm vui tất niên tết ấm áp"],"time":["10h"]}))
-# print(dbquery.convert_to_regex_constraint({"works":["tán gái","cua gái"],"address":["12 an bình","13 hòa hảo"]}))
+# print(dbquery.get_db_results({"name_activity":["đêm vui tất niên tết ấm áp","c"],"time":["10h","15/01/19"],"works": ["ức"]}))
+# print(dbquery.convert_to_regex_constraint({"name_activity":["đêm vui tất niên tết ấm áp"],"time":["10h","15/01/20"]}))

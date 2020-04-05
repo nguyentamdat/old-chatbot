@@ -101,6 +101,10 @@ list_anything_notification = ["sao cũng được","gì cũng được","anythin
         "k rõ","ko rõ","cũng được","cũng ok","cũng không sao","cũng dc","cũng k sao","cũng ko sao"]
 
 
+#map
+list_map_key = ["works", "name_place", "address", "time"]
+
+
 
 #indicator
 list_joiner_indicator = ["có được tham gia","có được tham dự","có được đi",\
