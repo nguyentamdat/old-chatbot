@@ -269,6 +269,8 @@ def catch_intent(message):
     message_preprocessed = preprocess_message(message)
     #note : vì notification của anything dễ bị nhầm với check intent (do chứa "cái gì","sao")
     # nên check trước
+    if len(message_preprocessed.lower().split(" ")) == 1 and (compound2unicode("không") or message_preprocessed.lower() == "no"):
+        return 'anything',1.0,message_preprocessed 
     for notification in list_anything_notification:   
         if message_preprocessed.lower().find(notification)!=-1:
             return 'anything',1.0,message_preprocessed
@@ -287,7 +289,8 @@ def catch_intent(message):
     while '' in list_token:
         list_token.remove('')
     message_preprocessed=' '.join(list_token)
-
+    print("---------------------------message preprocessed")
+    print(message_preprocessed)
     for notification in list_done_notification:   
         if message_preprocessed.lower().find(notification)!=-1:
             return 'done',1.0,message_preprocessed
@@ -862,6 +865,8 @@ def find_all_entity(intent,input_sentence):
     return result_entity_dict, confirm_obj
 
 def process_message_to_user_request(message,state_tracker):
+    print("----------------------------------message")
+    print(message)
     confirm_obj = None
     if isinstance(message,str):
         intent , proba , processed_message = catch_intent(message)
@@ -926,7 +931,15 @@ def process_message_to_user_request(message,state_tracker):
             user_action['inform_slots'] = {}
             user_action['request_slots'] = {}
     else:
+
         user_action = message
+        ######chuẩn hóa
+        if user_action["inform_slots"] != {}:
+            for key in user_action["inform_slots"].keys():
+                if isinstance(user_action["inform_slots"][key],list):
+                    for i in range(len(user_action["inform_slots"][key])):
+                        user_action["inform_slots"][key][i] = preprocess_message(user_action["inform_slots"][key][i])
+    
     # print("-----------------------------user action")
     # print(user_action)
     return user_action, confirm_obj

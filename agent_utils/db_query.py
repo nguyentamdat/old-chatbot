@@ -1,5 +1,5 @@
 from collections import defaultdict
-from dialogue_config import no_query_keys, usersim_default_key
+from .dialogue_config import no_query_keys, usersim_default_key
 import copy
  
 from flask import Flask, request, jsonify
@@ -117,44 +117,44 @@ class DBQuery:
             dict: The values and their occurrences given the key
         """
  
-        # slot_values = defaultdict(int)  # init to 0
-        # for id in db_subdict.keys():
-        #     current_option_dict = db_subdict[id]
-        #     # If there is a match
-        #     if key in current_option_dict.keys():
-        #         slot_value = current_option_dict[key]
-        #         tp_slot_value = tuple(slot_value)
-        #         # This will add 1 to 0 if this is the first time this value has been encountered, or it will add 1
-        #         # to whatever was already in there
-        #         slot_values[tp_slot_value] += 1
-        # return slot_values
-
         slot_values = defaultdict(int)  # init to 0
-        # print(slot_values)
         for id in db_subdict.keys():
             current_option_dict = db_subdict[id]
             # If there is a match
             if key in current_option_dict.keys():
                 slot_value = current_option_dict[key]
-                if key in list_map_key:
-                    if "time_works_place_address_mapping" in current_option_dict and current_option_dict["time_works_place_address_mapping"] is not None:
-                        list_obj_map = current_option_dict["time_works_place_address_mapping"]
-                        for obj_map in list_obj_map:
-                            if key in obj_map:
-                                slot_value.append(obj_map[key])
-                # đồng bộ các value để không cần xét đến thứ tự xuất hiện
-                slot_value = list(set(slot_value))
-
-                # print(slot_value)
-                if any(isinstance(i,list) for i in slot_value):
-                  slot_value = [value for sub_list in slot_value for value in sub_list]
-
                 tp_slot_value = tuple(slot_value)
-                # print(type(tp_slot_value))
                 # This will add 1 to 0 if this is the first time this value has been encountered, or it will add 1
                 # to whatever was already in there
                 slot_values[tp_slot_value] += 1
         return slot_values
+
+        # slot_values = defaultdict(int)  # init to 0
+        # # print(slot_values)
+        # for id in db_subdict.keys():
+        #     current_option_dict = db_subdict[id]
+        #     # If there is a match
+        #     if key in current_option_dict.keys():
+        #         slot_value = current_option_dict[key]
+        #         if key in list_map_key:
+        #             if "time_works_place_address_mapping" in current_option_dict and current_option_dict["time_works_place_address_mapping"] is not None:
+        #                 list_obj_map = current_option_dict["time_works_place_address_mapping"]
+        #                 for obj_map in list_obj_map:
+        #                     if key in obj_map:
+        #                         slot_value.extend(obj_map[key])
+        #         # đồng bộ các value để không cần xét đến thứ tự xuất hiện
+        #         slot_value = list(set(slot_value))
+
+        #         # print(slot_value)
+        #         if any(isinstance(i,list) for i in slot_value):
+        #           slot_value = [value for sub_list in slot_value for value in sub_list]
+
+        #         tp_slot_value = tuple(slot_value)
+        #         # print(type(tp_slot_value))
+        #         # This will add 1 to 0 if this is the first time this value has been encountered, or it will add 1
+        #         # to whatever was already in there
+        #         slot_values[tp_slot_value] += 1
+        # return slot_values
 
  
     def get_db_results(self, constraints):
@@ -172,8 +172,9 @@ class DBQuery:
         """
  
         # Filter non-queryable items and keys with the value 'anything' since those are inconsequential to the constraints
-        new_constraints = {k: v for k, v in constraints.items() if k not in self.no_query and v is not 'anything'}
- 
+        new_constraints = {k: v for k, v in constraints.items() if k not in self.no_query and v != 'anything' and v != 'no match available'}
+        # print("-----------------------------------DIEU KIEN")
+        # print(new_constraints)
         tuple_new_constraint=copy.deepcopy(new_constraints)
         # print(tuple_new_constraint)
         inform_items ={k:tuple(v) for k,v in tuple_new_constraint.items()}.items()
@@ -192,8 +193,13 @@ class DBQuery:
  
         available_options = {}
         regex_constraint = self.convert_to_regex_constraint(new_constraints)
+        print("-----------------------------------DIEU KIEN")
+        print(new_constraints)
         results = self.db.activities.find(regex_constraint)
+        print("-----------------------------------KET QUA")
+        
         for result in results:
+            print(result)
             #đổi từ object id sang string và dùng id đó làm key (thay vì dùng index của mảng để làm key vì không xác định đc index)
             result["_id"] = str(result["_id"])
             available_options.update({result['_id']:result})

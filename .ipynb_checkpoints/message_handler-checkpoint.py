@@ -248,6 +248,8 @@ def catch_intent(message):
     message_preprocessed=' '.join(list_token)
     #note : vì notification của anything dễ bị nhầm với check intent (do chứa "cái gì","sao")
     # nên check trước
+
+
     for notification in list_anything_notification:   
         if message_preprocessed.lower().find(notification)!=-1:
             return 'anything',1.0,message_preprocessed

@@ -238,7 +238,7 @@ def response_craft(agent_action, state_tracker, confirm_obj,isGreeting=False):
                         list_obj_map_match.append(obj_map)
 
             if list_obj_map_match != []:
-                response_obj += "Cụ thể các công việc sẽ là (kèm theo thời gian, địa điểm, địa chỉ):\n"
+                response_obj += "Cụ thể các công việc thỏa điều kiện bạn cung cấp sẽ là (kèm theo thời gian, địa điểm, địa chỉ):\n"
                 for obj_map_match in list_obj_map_match:
                     response_obj += "************************************************* \n"
                     for key in list_map_key:
