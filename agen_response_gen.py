@@ -180,7 +180,7 @@ def response_craft(agent_action, state_tracker, confirm_obj,isGreeting=False):
 
             # #nếu là câu hỏi intent confirm thì cần response lại mà match hay không
             # print("-------------------------------inform slot :{}".format(inform_slot))
-            # print("---------------------------------confirm obj: {}".format(confirm_obj))
+            print("---------------------------------confirm obj: {}".format(confirm_obj))
             response_match = ''
             if confirm_obj != None:
                 if inform_slot not in list_map_key:

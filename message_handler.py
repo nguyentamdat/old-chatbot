@@ -269,7 +269,7 @@ def catch_intent(message):
     message_preprocessed = preprocess_message(message)
     #note : vì notification của anything dễ bị nhầm với check intent (do chứa "cái gì","sao")
     # nên check trước
-    if len(message_preprocessed.lower().split(" ")) == 1 and (compound2unicode("không") or message_preprocessed.lower() == "no"):
+    if len(message_preprocessed.lower().split(" ")) == 1 and (message_preprocessed.lower()==compound2unicode("không") or message_preprocessed.lower() == "no"):
         return 'anything',1.0,message_preprocessed 
     for notification in list_anything_notification:   
         if message_preprocessed.lower().find(notification)!=-1:
