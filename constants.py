@@ -12,7 +12,12 @@ from sklearn.externals import joblib
 from sklearn import preprocessing
 import os.path
 from collections import OrderedDict
+import time
+# import glob
+# import os
 
+# list_of_files = glob.glob('/home/lap11305/LVTN/CSEAssistantServer/*.json') # * means all if need specific format then *.csv
+# latest_file = max(list_of_files, key=os.path.getctime)
 current_path = os.path.abspath(os.path.dirname(__file__))
 TAGS = OrderedDict()
 TAGS.update([('normal', 'O'),
@@ -125,10 +130,11 @@ map_entity_name_to_list_noti_anything = {
 }
 
 
-#dictionary
-with open('real_dict_2000_new_only_delete_question_noti_new_and_space_newest.json','r') as real_dict_file:
-    real_dict = json.load(real_dict_file)
-    real_dict_file.close()
+# do something 
+
+# with open(latest_file,'r') as real_dict_file:
+#     real_dict = json.load(real_dict_file)
+#     real_dict_file.close()
 
 with open('list_constants.json','r') as list_file:
     list_file_obj = json.load(list_file)
@@ -194,6 +200,10 @@ response_to_user_free_style = {
         "OK chào tạm biệt nha ^^ ! Rất vui được giúp bạn nè ",
         "Okie bái bai bạn nè ^^ ! Rất vui được giúp bạn nè ",
         "Bye bye nha ! :D Rất vui được giúp bạn nè "
+    ],
+    'dont_know':[
+        "Sori bạn, mình không hiểu, bạn nhập lại câu khác nhé.",
+        "Mình không hiếu ý bạn lắm nè, bạn nhập lại câu khác giúp mình nhe"
     ]
 }
 if __name__ == '__main__':

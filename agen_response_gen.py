@@ -176,6 +176,7 @@ def response_craft(agent_action, state_tracker, confirm_obj,isGreeting=False):
             sentence = sentence_pattern.replace("*found_slot*", AGENT_INFORM_OBJECT[inform_slot])
         else:
             key = agent_action['inform_slots']['activity']
+            #????????
             first_result_data = agent_action['inform_slots'][key][0]
 
             # #nếu là câu hỏi intent confirm thì cần response lại mà match hay không

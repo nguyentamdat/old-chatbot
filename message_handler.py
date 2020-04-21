@@ -11,12 +11,13 @@ import pickle
 import numpy as np
 from sklearn.externals import joblib
 from sklearn import preprocessing
-from constants import *
+import constants
 import json
 from collections import OrderedDict
 import re
+from constants import *
 
-
+# imp.reload(real_dict)
 
 def sentence_to_index_vector(input_sentence):
   list_token=input_sentence.split(' ')
@@ -593,6 +594,9 @@ def check_sublist(a,b):
     return check
 
 def find_all_entity(intent,input_sentence):
+    #dictionary
+    with open('real_dict_2000_new_only_delete_question_noti_new_and_space_newest.json','r') as real_dict_file:
+        real_dict = json.load(real_dict_file)
     # print("duongcc")
     normalized_input_sentence = compound2unicode(input_sentence)
     normalized_input_sentence = delete_extra_word(normalized_input_sentence,list_extra_word)
@@ -880,22 +884,28 @@ def process_message_to_user_request(message,state_tracker):
             user_action['request_slots'] = {intent:'UNK'}
         elif intent == 'not intent':
             #get agent request key for user to inform (not intent)
-            last_agent_action = state_tracker.history[-1]
-            #nếu agent request 1 key thì user trả lời key đó
-            if len(list(last_agent_action['request_slots'].keys())) > 0:
-                user_inform_key = list(last_agent_action['request_slots'].keys())[0]
-            #nếu agent inform 1 key thì user cũng inform lại key đó
-            elif len(list(last_agent_action['inform_slots'].keys())) > 0:
-                user_inform_key = list(last_agent_action['inform_slots'].keys())[0]
-                
-            if len(list(last_agent_action['request_slots'].keys())) > 0 or len(list(last_agent_action['inform_slots'].keys())) > 0:
-                final_intent = user_inform_key + '_inform'
+            # tránh những câu inform ngay từ ban đầu mà không biết intent
+            if state_tracker.history != []:
+                last_agent_action = state_tracker.history[-1]
+                #nếu agent request 1 key thì user trả lời key đó
+                if len(list(last_agent_action['request_slots'].keys())) > 0:
+                    user_inform_key = list(last_agent_action['request_slots'].keys())[0]
+                #nếu agent inform 1 key thì user cũng inform lại key đó
+                elif len(list(last_agent_action['inform_slots'].keys())) > 0:
+                    user_inform_key = list(last_agent_action['inform_slots'].keys())[0]
+                    
+                if len(list(last_agent_action['request_slots'].keys())) > 0 or len(list(last_agent_action['inform_slots'].keys())) > 0:
+                    final_intent = user_inform_key + '_inform'
+                else:
+                    final_intent = 'not intent'
+                result_entity_dict, confirm_obj = find_all_entity(final_intent,processed_message)
+                user_action['intent'] = 'inform'
+                user_action['inform_slots'] = result_entity_dict
+                user_action['request_slots'] = {}
             else:
-                final_intent = 'not intent'
-            result_entity_dict, confirm_obj = find_all_entity(final_intent,processed_message)
-            user_action['intent'] = 'inform'
-            user_action['inform_slots'] = result_entity_dict
-            user_action['request_slots'] = {}
+                user_action['intent'] = 'dont_know'
+                user_action['inform_slots'] = {}
+                user_action['request_slots'] = {}
         elif intent == 'anything':
             anything_key = None
             # lấy anything key từ noti 
@@ -931,7 +941,6 @@ def process_message_to_user_request(message,state_tracker):
             user_action['inform_slots'] = {}
             user_action['request_slots'] = {}
     else:
-
         user_action = message
         ######chuẩn hóa
         if user_action["inform_slots"] != {}:

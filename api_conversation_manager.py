@@ -16,13 +16,16 @@ from flask_pymongo import PyMongo
 from flask_cors import CORS
 from temp_agent_action_gen import *
 from constants import *
-from message_handler import *
+import message_handler 
 from agen_response_gen import *
 from dqn_agent import DQNAgent
 from agent_utils.state_tracker import StateTracker
 from keras import backend as K
 from pymongo import MongoClient
+import importlib
 
+importlib.reload(message_handler)
+from message_handler import *
 
 
 app = Flask(__name__)
@@ -89,7 +92,7 @@ def process_conversation_POST(state_tracker_id, message):
     #nếu có câu confirm request mới thì ghi đè
     if new_confirm_obj != None:
         confirm_obj = new_confirm_obj
-    if user_action['intent'] not in ["hello","other","done"] :
+    if user_action['intent'] not in ["hello","other","done","dont_know"] :
         dqn_agent = DQNAgent(state_tracker.get_state_size(), constants)    
         agent_act = get_agent_response(state_tracker, dqn_agent, user_action)
         StateTracker_Container[state_tracker_id] = (state_tracker,confirm_obj)

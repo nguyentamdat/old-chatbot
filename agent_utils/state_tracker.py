@@ -237,12 +237,14 @@ class StateTracker:
                     # print("MATCH FOUND: filtered only not empty data ")
                 else:
                     key, data = list(db_results.items())[0]
+                                        #######??????????
                     data = list(db_results.values())
                 # key, data = list(db_results.items())[0]
                 agent_action['inform_slots'] = {key:copy.deepcopy(data)}
                 agent_action['inform_slots'][self.match_key] = str(key)
             else:
                 agent_action['inform_slots'][self.match_key] = 'no match available'
+                ################?????????
             self.current_informs[self.match_key] = agent_action['inform_slots'][self.match_key]
         agent_action.update({'round': self.round_num, 'speaker': 'Agent'})
         

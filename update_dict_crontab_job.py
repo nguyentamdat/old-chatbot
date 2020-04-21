@@ -4,6 +4,11 @@ import pymongo
 from pymongo import MongoClient
 import random
 import os
+import glob
+import os
+
+# list_of_files = glob.glob('/home/lap11305/LVTN/CSEAssistantServer/*.json') # * means all if need specific format then *.csv
+# latest_file = max(list_of_files, key=os.path.getctime)
 client = MongoClient('mongodb://caochanhduong:bikhungha1@ds261626.mlab.com:61626/activity?retryWrites=false')
 db = client.activity
 with open('/home/lap11305/LVTN/CSEAssistantServer/real_dict_2000_new_only_delete_question_noti_new_and_space_newest.json','r') as dict_file:
