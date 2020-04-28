@@ -78,6 +78,8 @@ class StateTracker:
         user_act_rep[self.intents_dict[user_action['intent']]] = 1.0
 
         # Create bag of inform slots representation to represent the current user action
+        # TO DO :agent action là inform (inform key chung và các object thỏa điều kiện) thì trong ma trận agent_inform_slots_rep trong state  
+        # tính luôn các key của các object thỏa điều kiện 
         user_inform_slots_rep = np.zeros((self.num_slots,))
         for key in user_action['inform_slots'].keys():
             user_inform_slots_rep[self.slots_dict[key]] = 1.0
@@ -93,6 +95,8 @@ class StateTracker:
         # Create bag of filled_in slots based on the current_slots
         current_slots_rep = np.zeros((self.num_slots,))
         # print("current inform: {}".format(self.current_informs))
+
+        # TO DO : chỉ cập nhật các key trong current inform mà giá trị của nó khác rỗng (tức là không chỉ toàn chứa '', nếu là list rỗng thì vẫn tính là có giá trị)
         for key in self.current_informs:
             current_slots_rep[self.slots_dict[key]] = 1.0
 
@@ -104,6 +108,9 @@ class StateTracker:
         # Encode last agent inform slots
         agent_inform_slots_rep = np.zeros((self.num_slots,))
         # print(last_agent_action)
+
+        # TO DO :agent action là inform (inform key chung và các object thỏa điều kiện) thì trong ma trận agent_inform_slots_rep trong state  
+        # tính luôn các key của các object thỏa điều kiện 
         if last_agent_action:
             for key in last_agent_action['inform_slots'].keys():
                 if key in agent_inform_slots:
@@ -261,9 +268,42 @@ class StateTracker:
                                  'request_slots': dict) and changed to dict('intent': '', 'inform_slots': {},
                                  'request_slots': {}, 'round': int, 'speaker': 'User')
         """
+        ##TO DO: CẬP NHẬT THEO RULE SAU :
+        #########NẾU LÀ CÂU ĐẦU TIÊN NHẬP VÀO
+        # + ner bắt được và intent đều không là key đặc biệt => như bình thường, tức là chỉ cập nhật 1 key với 1 value
+		# + ner bắt được có 2 key đặc biệt trở lên, không quan tâm intent, đem bộ key đó đi query chung với nhau (thông tin chung hoặc trong object map)
+		# + ner bắt được có 1 key đặc biệt, intent không là key đặc biệt => xem key đặc biệt đó là thông tin chung => như bình thường
+		# + ner bắt được có 1 key đặc biệt, intent là 1 key đặc biệt khác, đem key đó đi query ở cả thông tin chung hoặc thông tin trong object map.
+        #lấy đúng 1 cặp object 1 là chung 2 là riêng (không tính lẻ hoặc 2 cặp trở lên) (nếu chỉ tồn tại 1 key đặc biệt thì tính là thông tin chung, 
+        # làm đường vẫn tính là works chung, khi nào là xây mét đường đầu tiên mới là works riêng)
 
+
+        ######### NẾU LÀ CÂU user response lại inform:
+		# +Key bình thường:
+		# 	+ Làm như bth, tức là chỉ cập nhật 1 key với 1 value
+		# +Key đặc biệt:
+		# 	+ đồng ý: nhận thông tin inform chung vào dkien và object vào dkien 
+		# 	+ anything: tìm object còn trống và bỏ vào (là object có chứa ''), đồng thời bỏ vào thông tin chung 
+        # nếu câu đầu tiên nhập vào ner có ít nhất 2 key đặc biệt hoặc 1 key đặc biệt nhưng intent cũng là key đặc biệt khác, 
+        # còn không thì chỉ bỏ vào thông tin chung
+		# 	+ từ chối hoặc chỉ nhận 1 thông tin inform (câu nhập): tìm object còn trống và bỏ vào, đồng thời bỏ vào 
+        # thông tin chung nếu câu đầu tiên nhập vào ner có ít nhất 2 key đặc biệt hoặc 1 key đặc biệt nhưng intent cũng là 
+        # key đặc biệt khác, còn không thì chỉ bỏ vào thông tin chung
+
+        ######### NẾU LÀ CÂU user response lại request:
+		# + Key bình thường:
+		# 	+ Làm như bth, tức là chỉ cập nhật 1 key với 1 value
+		# + Key đặc biệt:
+		# 	+ anything: tìm object còn trống và bỏ vào, đồng thời bỏ vào thông tin chung nếu câu đầu tiên nhập vào ner 
+        # có ít nhất 2 key đặc biệt hoặc 1 key đặc biệt nhưng intent cũng là key đặc biệt khác, còn không thì chỉ bỏ vào thông 
+        # tin chung
+		# 	+ nhận 1 thông tin inform (câu nhập): tìm object còn trống và bỏ vào, đồng thời bỏ vào thông tin chung nếu 
+        # câu đầu tiên nhập vào ner có ít nhất 2 key đặc biệt hoặc 1 key đặc biệt nhưng intent cũng là key đặc biệt khác, 
+        # còn không thì chỉ bỏ vào thông tin chung
         for key, value in user_action['inform_slots'].items():
             self.current_informs[key] = value
+
+        #current_request_slots giữ nguyên do request lúc nào cũng chỉ 1 thông tin .
         for key, value in user_action['request_slots'].items():
             if key not in self.current_request_slots:
                 self.current_request_slots.append(key)

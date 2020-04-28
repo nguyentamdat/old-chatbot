@@ -99,3 +99,43 @@ INFORM
 	chỉnh fill inform slot đang fill theo key chung có count lớn nhất (chưa count cho key con)
 	dbquery đã chỉnh
 	count db result for slot k cần chỉnh (do đã count theo key inform)
+
+QUY ƯỚC: 
++ các key đặc biệt giá trị của key CHUNG và key RIÊNG không được có phần giao nhau (giữa các key riêng vẫn có thể giao nhau, các hoạt động con có trùng giờ)
+
+Requirement:
+	+ câu đầu nhập vào: có 3 trường hợp:
+		+ ner bắt được và intent đều không là key đặc biệt => như bình thường
+		+ ner bắt được có 2 key đặc biệt trở lên, không quan tâm intent, đem bộ key đó đi query chung với nhau (thông tin chung hoặc trong object map)
+		+ ner bắt được có 1 key đặc biệt, intent không là key đặc biệt => xem key đặc biệt đó là thông tin chung => như bình thường
+		+ ner bắt được có 1 key đặc biệt, intent là 1 key đặc biệt khác, đem key đó đi query ở cả thông tin chung hoặc thông tin trong object map.
+	
+	lấy đúng 1 cặp object 1 là chung 2 là riêng (không tính lẻ hoặc 2 cặp trở lên) (nếu chỉ tồn tại 1 key đặc biệt thì tính là thông tin chung, làm đường vẫn tính là works chung, khi nào là xây mét đường đầu tiên mới là works riêng)
+	+ agent inform mà dạng key đặc biệt là trả về object thỏa điều kiện và trả key đặc biệt CHUNG hoặc RIÊNG (nằm trong object) tùy vào thông tin thỏa ( vì đó là thông tin user cần confirm), key bình thường thì chỉ trả key bình thường chung không trà list gì
+	+ user response lại inform:
+		+Key bình thường:
+			+ Làm như bth
+		+Key đặc biệt:
+			+ đồng ý: dựa vào object trả về HOẶC thông tin chung trả về  mà cập nhật vào điều kiện(cũ:nhận thông tin inform chung vào dkien và object vào dkien )
+			+ anything: nhận thông tin inform là "anything" và bỏ vào thông tin chung HOẶC riêng (trong object còn trống) (không bỏ vào cả 2 do đã xác định được user hỏi chung hay riêng dựa vào kết quả trả về ban đầu, hoạt động thỏa điều kiện ban đầu)(cũ: tìm object còn trống và bỏ vào, đồng thời bỏ vào thông tin chung nếu câu đầu tiên nhập vào ner có ít nhất 2 key đặc biệt hoặc 1 key đặc biệt nhưng intent cũng là key đặc biệt khác, còn không thì bỏ vào thông tin chung)
+			+ từ chối hoặc chỉ nhận 1 thông tin inform (câu nhập): nhận thông tin inform và bỏ vào thông tin chung HOẶC riêng (trong object còn trống) (không bỏ vào cả 2 do đã xác định được user hỏi chung hay riêng dựa vào kết quả trả về ban đầu, hoạt động thỏa điều kiện ban đầu) (cũ: tìm object còn trống và bỏ vào, đồng thời bỏ vào thông tin chung nếu câu đầu tiên nhập vào ner có ít nhất 2 key đặc biệt hoặc 1 key đặc biệt nhưng intent cũng là key đặc biệt khác, còn không thì bỏ vào thông tin chung)
+	+ user response lại request:
+		+ Key bình thường:
+			+ Làm như bth
+		+ Key đặc biệt:
+			+ anything: nhận thông tin inform là "anything" và bỏ vào thông tin chung HOẶC riêng (trong object còn trống) (không bỏ vào cả 2 do đã xác định được user hỏi chung hay riêng dựa vào kết quả trả về ban đầu, hoạt động thỏa điều kiện ban đầu)(cũ: tìm object còn trống và bỏ vào, đồng thời bỏ vào thông tin chung nếu câu đầu tiên nhập vào ner có ít nhất 2 key đặc biệt hoặc 1 key đặc biệt nhưng intent cũng là key đặc biệt khác, còn không thì bỏ vào thông tin chung)
+			+ nhận 1 thông tin inform (câu nhập): nhận thông tin inform và bỏ vào thông tin chung HOẶC riêng (trong object còn trống) (không bỏ vào cả 2 do đã xác định được user hỏi chung hay riêng dựa vào kết quả trả về ban đầu, hoạt động thỏa điều kiện ban đầu)(cũ: tìm object còn trống và bỏ vào, đồng thời bỏ vào thông tin chung nếu câu đầu tiên nhập vào ner có ít nhất 2 key đặc biệt hoặc 1 key đặc biệt nhưng intent cũng là key đặc biệt khác, còn không thì bỏ vào thông tin chungP
+	+ Agent trả kết quả:
+		+ Matchfound: 
+			+ Key bình thường: trả key bình thường và các object thỏa điều kiện + bài đăng
+			+ Key dac biet: trả key đặc biệt (chỉ nằm trong object hoặc nằm ngoài) và các object thỏa điều kiện + bài đăng
+		+ Trả lời confirm:
+			+ Key bình thường: so với key bình thường và kết luận
+			+ Key đặc biệt: so với key đặc biệt được trả về và kết luận
+
+
+Problem: 
+	+ Lúc cập nhật slot của các key đặc biệt (ví dụ ner bắt được 2 key là "works", "name_place"), thì phải cập nhật 2 slot còn lại (address, time) với giá trị '' để các object không bị lệch index, tuy nhiên lúc cập nhật vào ma trận current_slots_rep sẽ không cập nhật các key đó nếu các value trong các key đó toàn là ''. (lưu ý nếu là list rỗng thì vẫn tính)
+	+ lúc agent action là inform (inform key chung và các object thỏa điều kiện) thì trong ma trận agent_inform_slots_rep trong state  tính luôn các key của các object thỏa điều kiện 
+	+ current_request_slots giữ nguyên do request lúc nào cũng chỉ 1 thông tin .
+	+ 
