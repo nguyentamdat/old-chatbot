@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-from sklearn.externals import joblib
+import joblib
 import numpy as np
 from sklearn import preprocessing
 from sklearn.feature_extraction.text import TfidfVectorizer
 from fastai.text import *
 import torch
 import numpy as np
-from sklearn.externals import joblib
 from sklearn import preprocessing
 import os.path
 from collections import OrderedDict
