@@ -7,7 +7,7 @@ flask
 flask-cors
 mock
 coverage
-fastai
+fastai==1.0.58
 numpy==1.15.2
 scikit-learn==0.22.1
 Flask-PyMongo
