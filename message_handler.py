@@ -9,7 +9,6 @@ from fastai.text import *
 import torch
 import pickle
 import numpy as np
-from sklearn.externals import joblib
 from sklearn import preprocessing
 import constants
 import json
