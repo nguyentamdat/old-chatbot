@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 # from agent_utils.state_tracker import StateTracker
-from sklearn.externals import joblib
+import joblib
 import numpy as np
 from sklearn import preprocessing
 from sklearn.feature_extraction.text import TfidfVectorizer
